@@ -1,5 +1,5 @@
 <template>
-  <div class="card">
+  <div class="card" :class="{ matched: matched }">
     <div :class="{ flipped: flipped }">
       <img :src="getImgUrl(card.src)" alt="card front" class="front" />
       <img
@@ -14,14 +14,16 @@
 
 <script>
 export default {
-  props: ["card", "flipped"],
+  props: ["card", "flipped", "disabled", "matched"],
   methods: {
     getImgUrl(imgUrl) {
       const images = require(`@/assets/images/${imgUrl}.png`);
       return images;
     },
     handleClick() {
-      this.$emit("handle-choice", this.card);
+      if (!this.disabled) {
+        this.$emit("handle-choice", this.card);
+      }
     },
   },
 };
@@ -60,5 +62,21 @@ export default {
 .flipped .back {
   transform: rotateY(90deg);
   transition-delay: 0s;
+}
+
+/* animation when cards match */
+.matched {
+  animation: flip-out-hor-top 0.45s ease-out 1.2s both;
+}
+
+@keyframes flip-out-hor-top {
+  0% {
+    transform: rotateX(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: rotateX(70deg);
+    opacity: 0;
+  }
 }
 </style>

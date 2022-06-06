@@ -10,12 +10,13 @@
         :card="card"
         @handle-choice="handleChoice"
         :flipped="flipped(card)"
+        :disabled="disabled"
+        :matched="matched(card)"
       />
     </div>
-  </div>
 
-  <div>{{ choiceOne }}</div>
-  <div>{{ choiceTwo }}</div>
+    <p>Tries: {{ turns }}</p>
+  </div>
 </template>
 
 <script>
@@ -38,6 +39,7 @@ export default {
       turns: 0,
       choiceOne: null,
       choiceTwo: null,
+      disabled: false,
     };
   },
   methods: {
@@ -46,6 +48,9 @@ export default {
       const shuffleCards = [...this.cardImages, ...this.cardImages]
         .sort(() => Math.random() - 0.5)
         .map((card) => ({ ...card, id: Math.random() }));
+
+      this.choiceOne = null;
+      this.choiceTwo = null;
       this.cards = shuffleCards;
       this.turns = 0;
     },
@@ -58,14 +63,16 @@ export default {
       this.choiceOne = null;
       this.choiceTwo = null;
       this.turns += 1;
+      this.disabled = false;
     },
   },
   mounted() {
     this.shuffleCards();
   },
   // compare two selected cards
-  updated() {
+  beforeUpdate() {
     if (this.choiceOne && this.choiceTwo) {
+      this.disabled = true;
       if (this.choiceOne.src === this.choiceTwo.src) {
         this.cards = this.cards.map((card) => {
           if (card.src === this.choiceOne.src) {
@@ -84,6 +91,9 @@ export default {
     flipped() {
       return (card) =>
         card === this.choiceOne || card === this.choiceTwo || card.matched;
+    },
+    matched() {
+      return (card) => card.matched;
     },
   },
 };
