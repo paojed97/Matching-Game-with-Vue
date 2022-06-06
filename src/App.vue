@@ -9,6 +9,7 @@
         :key="card.id"
         :card="card"
         @handle-choice="handleChoice"
+        :flipped="flipped(card)"
       />
     </div>
   </div>
@@ -75,9 +76,15 @@ export default {
         });
         this.resetTurn();
       } else {
-        this.resetTurn();
+        setTimeout(() => this.resetTurn(), 1000);
       }
     }
+  },
+  computed: {
+    flipped() {
+      return (card) =>
+        card === this.choiceOne || card === this.choiceTwo || card.matched;
+    },
   },
 };
 </script>
